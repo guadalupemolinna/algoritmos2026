@@ -8,11 +8,11 @@ def romanos(cadena: str) -> int:
         return 0
     if len(cadena) == 1:
         return valores[cadena]
-    # si el valor actual es menor al que sigue, se resta (ej IV -> -1 + 5)
+    # si el valor actual es menor al que sigue, se resta
     if valores[cadena[0]] < valores[cadena[1]]:
         return -valores[cadena[0]] + romanos(cadena[1:])
     else:
-        # si es mayor o igual, se suma (ej VI -> 5 + 1)
+        # si es mayor o igual, se suma 
         return valores[cadena[0]] + romanos(cadena[1:])
 
 

@@ -91,4 +91,4 @@ def resolver_mcu(pila):
     print(f"Personajes con C, D o G: {personajes_cdg}")
 
 #llamada a la función
-resolver__mcu(pila_pers)
+resolver__mcu(pila_pers) #quitar un guion bajo

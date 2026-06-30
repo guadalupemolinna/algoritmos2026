@@ -1,1 +1,177 @@
+from list_ import List
+from super_heroes_data import superheroes
+from Queue import Queue
+lista_clase = List()
+
+for hero in superheroes:
+    lista_clase.append(hero)
+
+##1.A FUNCIÓN RECURSIVA PARA BUSCAR
+def buscar_superheroe(lista_obj: List, buscado: str, pos: int = 0) -> bool:
+    if pos >= len(lista_obj): #caso base: no se encontró el superheroe
+        return False
+    
+    if lista_obj[pos]['name'].lower() == buscado.lower():
+        return True
+    
+    return buscar_superheroe(lista_obj, buscado, pos+1) #llamada recursiva con la sig posicion
+
+print("__PUNTO 1.A__")
+objeto_buscado = "Captain America"
+
+existe = buscar_superheroe(lista_clase, objeto_buscado)
+
+if existe:
+    print(f"El superheroe {objeto_buscado} está en la lista.")
+
+#1. B  Funcion recursiva para listar los superheroes 
+
+def  listado_heroes(lista_obj: List, pos: int = 0) -> None:
+    if pos >= len(lista_obj):
+        return
+    
+    print(f"{lista_obj[pos]['name']}")
+    listado_heroes(lista_obj, pos+1)
+print()
+print("__PUNTO 1.B__")
+listado_heroes(lista_clase)
+
+#EJ 2
+def por_nombre(hero):
+    return hero['name']
+#2.A
+lista_marvel = List()
+lista_marvel.add_criterion('name', por_nombre)
+
+for hero in superheroes:
+    lista_marvel.append(hero)
+
+#2.A
+lista_marvel.sort_by_criterion(key_criterion='name')
+print()
+print(f"__LISTA DE HEROES ORDENADA POR NOMBRE__")
+
+for hero in lista_marvel:
+ print(f"{hero['name']}")
+
+#2. B
+print()
+print("__POSICIONES DE THE THING Y ROCKET RACCOON__")
+
+buscados = ["The Thing", "Rocket Raccoon"]
+
+for nombre in buscados:
+    index = lista_marvel.search(search_value=nombre, criterion='name')
+    if index is not None:
+     print (f"'{nombre}' está en la posicion:{index}")
+    else: 
+      print (f"'{nombre} no fue hallado")
+#.2.C
+print()
+print("__Listado de Villanos__")
+
+for hero in lista_marvel:
+   if hero['is_villain'] == True:
+     print(f"{hero['name']}")
+#2.D
+print()
+print("__VILLANOS QUE APARECIERON ANTES DE 1980__")
+
+queue_villanos = Queue()
+
+for hero in lista_marvel:
+   if hero['is_villain'] == True:
+      queue_villanos.arrive(hero)
+
+while queue_villanos.size() > 0:
+   villano = queue_villanos.attention()
+   if villano['first_appearance'] < 1980:
+    print(f"{villano['name']}- Año:{villano['first_appearance']}")
+
+#2. E
+print()
+print("__superheroes con  Bl, G, My, y W__")
+prefijos = ('Bl', 'G', 'My', 'W')
+
+for hero in lista_marvel:
+   if hero['name'].startswith(prefijos):
+      print(f'{hero['name']}')
+
+#2.F
+print()
+print("__PERSONAJES ORDENADOS POR NOMBRE REAL__")
+def nombre_real(hero):
+    nombre_real = hero.get('real_name')
+    if nombre_real is None:
+        return ""
+    return nombre_real
+
+lista_marvel.add_criterion('real_name', nombre_real)
+lista_marvel.sort_by_criterion(key_criterion='real_name')
+for hero in lista_marvel:
+ print(f"{hero['real_name']} = ({hero['name']})")
+
+#2. G
+print()
+print("__ORDENADOS POR FECHA DE APARICIÓN__")
+
+def anio_aparicion(hero):
+   return hero['first_appearance']
+
+lista_marvel.add_criterion('first_appearance', anio_aparicion)
+lista_marvel.sort_by_criterion(key_criterion='first_appearance')
+
+for hero in lista_marvel:
+    print(f"{hero['first_appearance']} - {hero['name']}")
+
+#2.H
+print()
+print("__MODIFICACION DE NOMBRE ANT-MAN__")
+
+for hero in lista_marvel:
+    if hero['name'].lower() == "ant man" or hero['name'].lower() == "ant-man":
+        nombre_ant = hero['real_name']
+        hero['real_name'] = "Scott Lang"
+        print(f"se modificó el nombre real de {hero['name']}")
+        print(f" ANTERIOR: {nombre_ant} -> nuevo: {hero['real_name']}")
+        break
+
+#2. I
+print()
+print("__Personajes con 'time traveling' o 'suit' en bio__")
+
+for hero in lista_marvel:
+   biografia = hero['short_bio'].lower()
+
+   if "time-traveling" in biografia or "suit" in biografia:
+      print(f"{hero['name']}")
+      print(f"bio: {hero['short_bio']}")
+      print("-" * 30)
+
+#2.J
+print()
+print("__ELIMINACIÓN DE ELECTRO Y BARON ZEMO__")
+
+lista_marvel.add_criterion('name', por_nombre)
+lista_marvel.sort_by_criterion(key_criterion='name')
+eliminados = ["Electro", "Baron Zemo"]
+ 
+for buscados in eliminados:
+   index = lista_marvel.search(search_value=buscados, criterion='name')
+    
+   if index is not None:
+      hero = lista_marvel[index]
+
+      print(f"encontrado: {hero['name']}")
+      print(f"nombre Real: {hero['real_name']}")
+      print(f"Año aparición: {hero['first_appearance']}")
+      print(f"villano: {hero['is_villain']}")
+      print(f"biografía: {hero['short_bio']}")
+     
+      lista_marvel.delete_value(value=buscados, criterion='name')
+      print(f"{hero['name']} ha sido eliminado de la lista")
+      print("-" * 50)
+      
+   else:
+      print(f" {buscados} no se encontraba en la lista.")
 

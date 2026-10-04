@@ -160,7 +160,7 @@ for ent in lista_entrenadores:
   tiene_planta = False
   tiene_agua_volador = False
 
-  for p in ent.pokemons:a
+  for p in ent.pokemons:
     if p.tipo.lower() == "fuego" or p.subtipo.lower() == "fuego":
       tiene_fuego = True
     if p.tipo.lower() == "planta" or p.subtipo.lower() == "planta":

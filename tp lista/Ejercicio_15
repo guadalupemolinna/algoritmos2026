@@ -1,0 +1,264 @@
+from list_ import List
+
+class Pokemon:
+    def __init__(self, nombre, nivel, tipo, subtipo):
+        self.nombre = nombre
+        self.nivel = nivel      #define la estructura basica de cada pokémon
+        self.tipo = tipo
+        self.subtipo = subtipo
+
+    def __str__(self):
+        return f"-{self.nombre} (nivel: {self.nivel}, tipo: {self.tipo}/{self.subtipo})" # Define cómo se va a mostrar en texto un pokémon cuando se haga un print
+
+
+class Entrenador:
+    def __init__(self, nombre, torneos_ganados, batallas_perdidas, batallas_ganadas):  #define la estructura del entrenador
+        self.nombre = nombre                                                        
+        self.torneos_ganados = torneos_ganados  
+        self.batallas_perdidas = batallas_perdidas
+        self.batallas_ganadas = batallas_ganadas
+        self.pokemons = List()  #cada entrenador tiene su propia instancia de la clase List para guardar sus pokemones
+
+    def __str__(self):
+        info = f"Entrenador: {self.nombre} | Torneos: {self.torneos_ganados} | Ganadas: {self.batallas_ganadas} | Perdidas: {self.batallas_perdidas}\n   Pokémons:" # Cadena inicial con datos grales del entrenador
+        for poke in self.pokemons: # se recorre la sublista de pokémon de este entrenador en específico
+            info += f"\n{poke}" #garra lo que ya estaba guardado, baja un renglón (\n), e imprime los datos formateados de ese pokemon repitiéndolo con cada pokémon que tenga el entrenador en su sublista
+        return info #se devuelve todo el texto armado
+
+
+def by_nombre_entrenador(item): #funciones auxiliares que reciben un objeto (item, que será un entrenador)
+    return item.nombre            #y devuelven el atributo específico que se les pide (.nombre o .torneos_ganados)
+
+def by_torneos_ganados(item):   #le enseñan a la lista qué valor exacto extraer y comparar cada vez
+    return item.torneos_ganados   # que se necesite buscar u ordenar entrenadores por nombre u torneos
+
+
+#libreria de datos iniciales (entrenadores y sus sublista de pokemon)
+datos_entrenadores = [
+    {
+        "nombre": "Ash",
+        "torneos_ganados": 5,
+        "batallas_perdidas": 10,
+        "batallas_ganadas": 50,
+        "pokemons": [
+            ("Pikachu", 88, "Electrico", "Ninguno"),
+            ("Charizard", 90, "Fuego", "Volador"),
+            ("Bulbasaur", 85, "Planta", "Veneno"),
+            ("Pikachu", 30, "Electrico", "Ninguno")
+        ]
+    },
+    {
+        "nombre": "Brock",
+        "torneos_ganados": 2,
+        "batallas_perdidas": 5,
+        "batallas_ganadas": 20,
+        "pokemons": [
+            ("Onix", 45, "Roca", "Tierra"),
+            ("Wingull", 40, "Agua", "Volador")
+        ]
+    },
+    {
+        "nombre": "Misty",
+        "torneos_ganados": 3,
+        "batallas_perdidas": 8,
+        "batallas_ganadas": 35,
+        "pokemons": [
+            ("Starmie", 50, "Agua", "Psiquico"),
+            ("Pikachu", 30, "Electrico", "Ninguno")  # Repetido con Ash para probar el inciso i
+        ]
+    },
+    {
+        "nombre": "Cynthia",
+        "torneos_ganados": 6,
+        "batallas_perdidas": 2,
+        "batallas_ganadas": 40,
+        "pokemons": [
+            ("Garchomp", 95, "Dragon", "Tierra"),
+            ("Tyrantrum", 80, "Roca", "Dragon")
+        ]
+    }
+]
+
+#inicializacion de la lista principal y registro de criterios
+lista_entrenadores = List()
+lista_entrenadores.add_criterion('nombre', by_nombre_entrenador)
+lista_entrenadores.add_criterion('torneos_ganados', by_torneos_ganados)
+
+
+for datos in datos_entrenadores:
+    entrenador = Entrenador(
+        datos["nombre"],
+        datos["torneos_ganados"],
+        datos["batallas_perdidas"],
+        datos["batallas_ganadas"]
+    )
+
+    for p_nombre, p_nivel, p_tipo, p_subtipo in datos["pokemons"]:
+        entrenador.pokemons.append(Pokemon(p_nombre, p_nivel, p_tipo, p_subtipo))
+    
+    lista_entrenadores.append(entrenador)
+
+
+
+print("a. Obtener la cantidad de pokemons de un determinado entrenador")
+buscado = input("ingrese el nombre del entrenador que desea buscar: ")
+encontrado = False
+
+for ent in lista_entrenadores:
+    if ent.nombre.lower() == buscado.strip().lower():
+        print(f"El entrenador {ent.nombre} tiene {len(ent.pokemons)} Pokémons.")
+        encontrado = True
+        break 
+
+if not encontrado:
+    print(f"no se encontró al entrenador '{buscado}' en la lista.")
+
+
+print("-------b. Listar los entrenadores que hayan ganado más de tres torneos")
+for ent in lista_entrenadores:
+    if ent.torneos_ganados > 3:
+        print(f"{ent.nombre}: ({ent.torneos_ganados} torneos ganados)")
+
+
+print("-----c.el pokemon de mayor nivel del entrenador con mayor cantidad de torneos ganados")
+max_torneos = -1
+ent_mayor_torneos = None
+for ent in lista_entrenadores:
+    if ent.torneos_ganados > max_torneos:
+        max_torneos = ent.torneos_ganados
+        ent_mayor_torneos = ent
+
+if ent_mayor_torneos and len(ent_mayor_torneos.pokemons) > 0:
+    poke_mayor = ent_mayor_torneos.pokemons[0]
+    for p in ent_mayor_torneos.pokemons:
+        if p.nivel > poke_mayor.nivel:
+            poke_mayor = p
+    print(f"Entrenador con más torneos: {ent_mayor_torneos.nombre} ({ent_mayor_torneos.torneos_ganados} torneos)")
+    print(f"Pokémon de mayor nivel:\n{poke_mayor}")
+
+
+print("-------d. Mostrar todos los datos de un entrenador y sus pokemons")
+buscado_d = "Cynthia"
+for ent in lista_entrenadores:
+    if ent.nombre == buscado_d:
+        print(ent)
+
+
+print("e.---mostrar los entrenadores cuyo porcentaje de batallas ganados sea mayor al 79%")
+for ent in lista_entrenadores:
+    total_batallas = ent.batallas_ganadas + ent.batallas_perdidas
+    if total_batallas > 0:
+        porcentaje = (ent.batallas_ganadas / total_batallas) * 100
+        if porcentaje > 79:
+            print(f"{ent.nombre} ({porcentaje:.2f}% de victorias)")
+
+
+print("---f. Los entrenadores que tengan Pokémons de tipo fuego y planta o agua/volador")
+
+for ent in lista_entrenadores:
+  tiene_fuego = False
+  tiene_planta = False
+  tiene_agua_volador = False
+
+  for p in ent.pokemons:a
+    if p.tipo.lower() == "fuego" or p.subtipo.lower() == "fuego":
+      tiene_fuego = True
+    if p.tipo.lower() == "planta" or p.subtipo.lower() == "planta":
+      tiene_planta = True
+    if (p.tipo.lower() == "agua" and p.subtipo.lower() == "volador") or (
+        p.tipo.lower() == "volador" and p.subtipo.lower() == "agua"
+    ):
+      tiene_agua_volador = True
+
+  if (tiene_fuego and tiene_planta) or tiene_agua_volador:
+    print(f"- {ent.nombre}")
+
+# g. El promedio de nivel de los Pokémons de un determinado entrenador
+print("--- g. Promedio de nivel de los Pokémons de un entrenador ---")
+buscado_g = "Ash"
+for ent in lista_entrenadores:
+    if ent.nombre == buscado_g:
+        if len(ent.pokemons) > 0:
+            suma = sum(p.nivel for p in ent.pokemons)
+            promedio = suma / len(ent.pokemons)
+            print(f"El promedio de nivel de los Pokémons de {ent.nombre} es: {promedio:.2f}")
+
+
+
+print("--- h.cantidad de entrenadores que tienen a un determinado Pokémon ---")
+poke_h = "Pikachu"
+contador_h = 0
+for ent in lista_entrenadores:
+    for p in ent.pokemons:
+        if p.nombre.lower() == poke_h.lower():
+            contador_h += 1
+            break
+print(f"el Pokemon '{poke_h}' lo tienen {contador_h} entrenadores.")
+
+
+
+print("---i.entrenadores con Pokémons repetidos ")
+for ent in lista_entrenadores:
+    vistos = []
+    repetido = False
+    for p in ent.pokemons:
+        if p.nombre in vistos:
+            repetido = True
+            break
+        vistos.append(p.nombre)
+    if repetido:
+        print(f"- {ent.nombre} tiene Pokémon repetido.")
+
+
+print("---j.entrenadores con Tyrantrum, Terrakion o Wingull")
+buscados_j = ["Tyrantrum", "Terrakion", "Wingull"]
+for ent in lista_entrenadores:
+    encontro = False
+    for p in ent.pokemons:
+        if p.nombre in buscados_j:
+            encontro = True
+            break
+    if encontro:
+        print(f"- {ent.nombre}")
+
+
+
+print("---k.búsqueda interactiva de entrenador y pokemon")
+
+while True:
+    entrenador_ingresado = input("\nIngrese el nombre del entrenador (o presione Enter/escriba 'salir' para terminar): ")
+    
+    if entrenador_ingresado.lower() == 'salir' or entrenador_ingresado == '':
+        print("Saliendo de la búsqueda interactiva...")
+        break
+    pokemon_ingresado = input("Ingrese el nombre del Pokémon: ")
+
+    encontrado_ent = None
+    for ent in lista_entrenadores:
+        if ent.nombre.lower() == entrenador_ingresado.lower():
+            encontrado_ent = ent
+            break
+
+    if encontrado_ent:
+        encontrado_poke = None
+        for p in encontrado_ent.pokemons:
+            if p.nombre.lower() == pokemon_ingresado.lower():
+                encontrado_poke = p
+                break
+                
+        if encontrado_poke:
+            print(f"exito! El entrenador {encontrado_ent.nombre} sí tiene a {encontrado_poke.nombre}.")
+            print("datos completos del wntrenador:")
+            print(encontrado_ent)
+            print("datos completos del pokemon:")
+            print(encontrado_poke)
+        else:
+            print(f"El entrenador {encontrado_ent.nombre} existe, pero no tiene al Pokémon {pokemon_ingresado}.")
+    else:
+        print(f"No se encontró al entrenador {entrenador_ingresado}.")
+ 
+    continuar = input("desea hacer otra búsqueda? (s/n): ").lower()
+    if continuar != 's':
+        print("Hasta luego!")
+        break
+    

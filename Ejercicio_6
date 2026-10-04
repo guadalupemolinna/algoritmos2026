@@ -1,0 +1,108 @@
+from list_ import List
+
+class SuperHeroe:
+    def __init__(self, nombre, anio_aparicion, comic_house, bio):
+        self.nombre = nombre
+        self.anio_aparicion = anio_aparicion
+        self.comic_house = comic_house
+        self.bio = bio
+
+    def __str__(self):
+        return f"[{self.comic_house}] {self.nombre} ({self.anio_aparicion}) - bio: {self.bio}"
+
+def by_nombre(item):
+    return item.nombre
+
+def by_anio_aparicion(item):
+    return item.anio_aparicion   #funciones de criterio para que lista pueda ordenar o buscar por atributos
+
+
+def by_comic_house(item):
+    return item.comic_house
+
+datos_heroes = [
+    ("Linterna Verde", 1940, "DC", "Posee un anillo de poder y un traje energético."),
+    ("Wolverine", 1974, "Marvel", "Mutante con garras de adamantium y factor de curación."),
+    ("Dr. Strange", 1963, "DC", "Hechicero supremo que usa una capa mística."),
+    ("Capitana Marvel", 1968, "Marvel", "Guerrera con un traje especial y gran poder cósmico."),
+    ("Mujer Maravilla", 1941, "DC", "Princesa amazona con armadura y lazo de la verdad."),
+    ("Flash", 1940, "DC", "Hombre más rápido del mundo con un traje rojo."),
+    ("Star-Lord", 1976, "Marvel", "Líder de los Guardianes de la Galaxia con casco y propulsores."),
+    ("Batman", 1939, "DC", "Vengador nocturno con armadura y baticinturón."),
+    ("Superman", 1938, "DC", "Hijo de Krypton con un traje azul y rojo."),
+    ("Spider-Man", 1962, "Marvel", "Joven picado por una araña radioactiva con un traje rojo y azul.")
+]
+lista_superheroes = List()
+lista_superheroes.add_criterion('nombre', by_nombre)
+lista_superheroes.add_criterion('anio_aparicion', by_anio_aparicion)
+lista_superheroes.add_criterion('comic_house', by_comic_house)
+
+for nombre, anio, casa, bio in datos_heroes: #evita repetir .append
+    lista_superheroes.append(SuperHeroe(nombre, anio, casa, bio))
+
+
+#a. eliminar a linterna verde
+eliminar_linterna = lista_superheroes.delete_value("Linterna Verde", "nombre")
+print("Linterna Verde se ha eliminado" if eliminar_linterna else "No se encontro")
+
+#b. mostrar cuando aparecio wolverine
+i_wolverine = lista_superheroes.search("Wolverine", "nombre") #busca a wolverine bajo el criterio nombre y devuelve el indice de wolverine
+
+if i_wolverine is not None:
+    wolverine = lista_superheroes[i_wolverine]
+    print(f"el año de aparicion de wolverine es:{wolverine.anio_aparicion}")
+else:
+    print("no se encontro a wolverine en la lista.")
+
+
+#c. cambiar la casa d dr, Strange a marvel
+i_strange = lista_superheroes.search("Dr. Strange", "nombre")
+
+if i_strange is not None:
+    lista_superheroes[i_strange].comic_house = "Marvel"
+    print("Se ha cambiado la casa de Dr. strange a Marvel")
+else:
+    print("No se encontro a dr. strange en la lista")
+
+#d. mostrar el nombre de los superheroes que mencionan "traje" o "Armadura" en su bio
+for heroe in lista_superheroes:
+    if "traje" in heroe.bio.lower() or "armadura" in heroe.bio.lower():
+        print(heroe.nombre)
+
+#e. mostrar el nombre y casa de los superheroes cuya fecha de aparicion sea antes de 1963
+for heroe in lista_superheroes:
+    if heroe.anio_aparicion < 1963:
+        print(f"{heroe.nombre} ({heroe.comic_house}) - Año: {heroe.anio_aparicion}")
+
+
+#f. mostrar casa a la que pertenece capitana marvel y mujer maravilla
+
+for heroe in lista_superheroes:
+    if heroe.nombre == "Capitana Marvel" or heroe.nombre == "Mujer Maravilla":
+      print(f"{heroe.nombre}: {heroe.comic_house}")
+
+
+#g. mostrar informacion de flash y star-lord
+for heroe in lista_superheroes:
+    if heroe.nombre in ["Flash", "Star-Lord"]:
+        print(heroe)
+
+
+#h. listar superheroes que comienzan con b,m y s
+for heroe in lista_superheroes:
+    if heroe.nombre.startswith(("B","M", "S")):
+        print(f"{heroe.nombre}")
+
+# i. determinar cuántos superhéroes hay de cada casa de cómic
+contador_marvel = 0
+contador_dc = 0
+
+for heroe in lista_superheroes:
+    if heroe.comic_house == "Marvel":
+        contador_marvel += 1
+    elif heroe.comic_house == "DC":
+        contador_dc += 1
+
+
+print(f"- Marvel: {contador_marvel}")
+print(f"- DC: {contador_dc}")

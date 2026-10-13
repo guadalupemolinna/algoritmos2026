@@ -1,0 +1,91 @@
+from tree import BinaryTree
+mcu = BinaryTree()
+
+def generar_bosque(root, heroes, villains):
+    if root is not None:
+        if root.other_values['is_hero']:
+            destino = heroes 
+        else:
+            destino = villains
+        destino.insert_node(root.value, root.other_values)    
+        generar_bosque(root.left, heroes, villains)
+        generar_bosque(root.right, heroes, villains)
+
+heroes = BinaryTree()
+villains = BinaryTree()
+generar_bosque(mcu.root, heroes, villains)
+#a. además del nombre del superhéroe, en cada nodo del árbol se almacenará un campo boo-
+#leano que indica si es un héroe o un villano, True y False respectivamente#
+personajes = [
+    ('Iron Man', True),
+    ('Thanos', False),
+    ('Capitan America', True),
+    ('Capitan Marvel', True),
+    ('Doctor Strage', True),   # mal escrito a propósito
+    ('Loki', False),
+    ('Ultron', False),
+]
+
+for nombre, es_heroe in personajes:
+    mcu.insert_node(nombre, {'is_hero': es_heroe})
+
+#b. listar los villanos ordenados alfabéticamente 
+print("\nListado de Villanos ordenados alfabeticamente:")
+mcu.inorden_villain()
+print()
+
+#c. mostrar todos los superhéroes que empiezan con C
+print("\nHeróes que empiezan con c:")
+mcu.inorden_hero_star_with("C")
+print()
+
+#d.determinar cuántos superhéroes hay el árbol;
+print("\nCantidad de heróes:")
+print(mcu.count_heroes())
+print()
+
+#e. Doctor Strange en realidad está mal cargado. Utilice una búsqueda por proximidad para
+#encontrarlo en el árbol y modificar su nombre
+print("\nCorrección de Doctor Strange:")
+encontrados = mcu.proxy_search('stra') #llama a la busqueda por proximidad con el fragmento "stra" devuelve la lista d nodos
+                                       #cuyo nombre contiene stra y se guarda en encontrados
+if encontrados: #pregunta si la lista tiene algo
+    nodo = encontrados[0] #toma el primer nodo d la lista
+    viejo = nodo.value #guarda el nombre mal escrito
+    datos = nodo.other_values #guarda el diccionario del nodo al borrar el nodo se pierde ese dato,
+                             #y hay que conservarlo para que el personaje siga siendo héro
+    print('Encontrado:', viejo) #muestra el nombre viejo
+
+    mcu.delete_node(viejo) #borra del arbol el nodo con nombre viejo
+    mcu.insert_node('Doctor Strange', datos) #inseta un nodo nuevo con el nombre corregido y los mismos datos guardados 
+    print('Corregido a: Doctor Strange')
+else:
+    print('No se encontró')
+print()
+
+#f. listar los superhéroes ordenados de manera descendente;
+print("\nListar superheroes ordenados de manera descendente:")
+mcu.postorden_hero()
+print()
+
+#g. generar un bosque a partir de este árbol, un árbol debe contener a los superhéroes y otro a
+#los villanos, luego resolver las siguiente tareas:
+    #I. determinar cuántos nodos tiene cada árbol;
+    #II. realizar un barrido ordenado alfabéticamente de cada árbol.
+
+heroes = BinaryTree()
+villains = BinaryTree()
+generar_bosque(mcu.root, heroes, villains)
+
+print("Cantidad de nodos:")
+print('Héroes:', heroes.count_nodes())
+print('Villanos:', villains.count_nodes())
+print()
+
+print("Héroes ordenados alfabéticamente:")
+heroes.inorden()
+print()
+
+print("Villanos ordenados alfabéticamente:")
+villains.inorden()
+print()   

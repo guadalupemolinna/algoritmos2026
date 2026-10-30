@@ -51,15 +51,13 @@ class BinaryTree():
         self.root = __insert_node(self.root, value, other_value)
 
     def delete_node(self, value: Any) -> Optional[Any]:
+
         def __replace(root):
-            # print(root.value)
-            aux = None
             if root.right is None:
-                # print('mayor encontrado')
                 return root.left, root
-            else:
-                # print('segui buscando a la derecha')
-                root.right, aux = __replace(root.right)
+            root.right, aux = __replace(root.right)
+            root = self.auto_balance(root)
+            self.update_height(root)
             return root, aux
 
         def __delete_node(root, value):
@@ -67,37 +65,25 @@ class BinaryTree():
             other_value = None
             if root is not None:
                 if value < root.value:
-                    # print('ir a la izq')
-                    # input()
-                    root.left, x, other_value = __delete_node(root.left,value)
+                    root.left, x, other_value = __delete_node(root.left, value)
                 elif value > root.value:
-                    # print('ir a la derecha')
-                    # input()
                     root.right, x, other_value = __delete_node(root.right, value)
                 else:
-                    # print('valor encontrado')
-                    # input()
                     x = root.value
                     other_value = root.other_values
-                    aux = None
                     if root.left is None:
-                        # print('no tiene hijo izquierdo')
-                        # input()
                         return root.right, x, other_value
                     elif root.right is None:
-                        # print('no tiene hijo derecho')
-                        # input()
                         return root.left, x, other_value
                     else:
-                        # print('buscar remplazo')
-                        # input()
                         root.left, aux = __replace(root.left)
                         root.value = aux.value
+                        root.other_values = aux.other_values
+                root = self.auto_balance(root)
+                self.update_height(root)
             return root, x, other_value
 
-        other_value = None
         self.root, x, other_value = __delete_node(self.root, value)
-
         return x, other_value
 
     def search(self, value) -> Optional[Any]:
@@ -291,5 +277,110 @@ class BinaryTree():
         return __count_nodes(self.root)
 
 
+    # a. listado inorden de criaturas y quien las derroto
+    def inorden_criaturas(self) -> None:
 
+        def __inorden_criaturas(root):
+            if root.left is not None:
+                __inorden_criaturas(root.left)
+            vencedor = root.other_values['derrotado_por']
+            if vencedor is None:
+                print(root.value, '- Sin derrotar')
+            else:
+                print(root.value, '-', vencedor)
+            if root.right is not None:
+                __inorden_criaturas(root.right)
+
+        if self.root is not None:
+            __inorden_criaturas(self.root)
+
+    # e. criaturas derrotadas por un heroe o dios
+    def inorden_derrotadas_por(self, heroe: str) -> None:
+
+        def __inorden_derrotadas_por(root, heroe):
+            if root.left is not None:
+                __inorden_derrotadas_por(root.left, heroe)
+            if root.other_values['derrotado_por'] == heroe:
+                print(root.value)
+            if root.right is not None:
+                __inorden_derrotadas_por(root.right, heroe)
+
+        if self.root is not None:
+            __inorden_derrotadas_por(self.root, heroe)
+
+    # f. criaturas que no fueron derrotadas
+    def inorden_sin_derrotar(self) -> None:
+
+        def __inorden_sin_derrotar(root):
+            if root.left is not None:
+                __inorden_sin_derrotar(root.left)
+            if root.other_values['derrotado_por'] is None:
+                print(root.value)
+            if root.right is not None:
+                __inorden_sin_derrotar(root.right)
+
+        if self.root is not None:
+            __inorden_sin_derrotar(self.root)
+
+    # n. criaturas capturadas por un heroe o dios
+    def inorden_capturadas_por(self, heroe: str) -> None:
+
+        def __inorden_capturadas_por(root, heroe):
+            if root.left is not None:
+                __inorden_capturadas_por(root.left, heroe)
+            if root.other_values['capturada'] == heroe:
+                print(root.value)
+            if root.right is not None:
+                __inorden_capturadas_por(root.right, heroe)
+
+        if self.root is not None:
+            __inorden_capturadas_por(self.root, heroe)
+
+    # d (paso 1) carga en el arbol "destino" cuantas criaturas derroto cada vencedor
+    def contar_victorias(self, destino) -> None:
+
+        def __contar_victorias(root):
+            if root.left is not None:
+                __contar_victorias(root.left)
+            vencedor = root.other_values['derrotado_por']
+            if vencedor is not None:
+                nodo = destino.search(vencedor)
+                if nodo is None:
+                    destino.insert_node(vencedor, {'cantidad': 1})
+                else:
+                    nodo.other_values['cantidad'] += 1
+            if root.right is not None:
+                __contar_victorias(root.right)
+
+        if self.root is not None:
+            __contar_victorias(self.root)
+
+    # d (paso 2). arma un arbol ordenado por (cantidad, nombre)
+    def armar_ranking(self, destino) -> None:
+
+        def __armar_ranking(root):
+            if root.left is not None:
+                __armar_ranking(root.left)
+            destino.insert_node((root.other_values['cantidad'], root.value))
+            if root.right is not None:
+                __armar_ranking(root.right)
+
+        if self.root is not None:
+            __armar_ranking(self.root)
+
+    # dpaso 3. muestra los primeros "cantidad" de mayor a menor
+    # (inorden invertido: derecha, nodo, izquierda)
+    def top_ranking(self, cantidad: int) -> None:
+
+        def __top_ranking(root, restantes):
+            if root is None or restantes == 0:
+                return restantes
+            restantes = __top_ranking(root.right, restantes)
+            if restantes > 0:
+                print(root.value[1], '-', root.value[0])
+                restantes -= 1
+            restantes = __top_ranking(root.left, restantes)
+            return restantes
+
+        __top_ranking(self.root, cantidad)
 

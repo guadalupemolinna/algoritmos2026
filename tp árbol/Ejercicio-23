@@ -1,0 +1,134 @@
+from tree import BinaryTree
+
+# clave= nombre de la criatura
+criaturas = [
+    ('Ceto', None), ('Tifón', 'Zeus'), ('Equidna', 'Argos Panoptes'),
+    ('Dino', None), ('Pefredo', None), ('Enio', None),
+    ('Escila', None), ('Caribdis', None), ('Euríale', None), ('Esteno', None),
+    ('Medusa', 'Perseo'), ('Ladón', 'Heracles'),
+    ('Aguila del Cáucaso', None), ('Quimera', 'Belerofonte'),
+    ('Hidra de Lerna', 'Heracles'), ('León de Nemea', 'Heracles'),
+    ('Esfinge', 'Edipo'), ('Dragón de la Cólquida', None), ('Cerbero', None),
+    ('Cerda de Cromión', 'Teseo'), ('Ortro', 'Heracles'),
+    ('Toro de Creta', 'Teseo'), ('Jabalí de Calidón', 'Atalanta'),
+    ('Carcinos', None), ('Gerión', 'Heracles'),
+    ('Cloto', None), ('Láquesis', None), ('Átropos', None),
+    ('Minotauro de Creta', 'Teseo'), ('Harpías', None),
+    ('Argos Panoptes', 'Hermes'), ('Aves del Estínfalo', None),
+    ('Talos', 'Medea'), ('Sirenas', None), ('Pitón', 'Apolo'),
+    ('Cierva de Cerinea', None), ('Basilisco', None), ('Jabalí de Erimanto', None),
+]
+
+arbol = BinaryTree()
+
+for nombre, vencedor in criaturas:
+    arbol.insert_node(nombre, {
+        'derrotado_por': vencedor,   # None si no fue derrotada
+        'descripcion': '',           # punto b
+        'capturada': None,           # punto g
+    })
+
+# a
+print('criaturas y quién las derrotó:')
+arbol.inorden_criaturas()
+print()
+
+# b
+print('cargar descripciones:')
+nodo = arbol.search('Talos')
+if nodo is not None:
+    nodo.other_values['descripcion'] = 'Gigante de bronce que protegía la isla de Creta.'
+nodo = arbol.search('Cerbero')
+if nodo is not None:
+    nodo.other_values['descripcion'] = 'Perro de tres cabezas que custodia el Hades.'
+nodo = arbol.search('Medusa')
+if nodo is not None:
+    nodo.other_values['descripcion'] = 'Gorgona con serpientes en lugar de cabello.'
+print('Descripciones cargadas')
+print()
+
+# c
+print('información de Talos:')
+nodo = arbol.search('Talos')
+if nodo is not None:
+    print('Nombre:', nodo.value)
+    print('Derrotado por:', nodo.other_values['derrotado_por'])
+    print('Descripción:', nodo.other_values['descripcion'])
+    print('Capturada por:', nodo.other_values['capturada'])
+print()
+
+# d
+print('Top 3 que derrotaron más criaturas:')
+vencedores = BinaryTree()
+arbol.contar_victorias(vencedores)
+ranking = BinaryTree()
+vencedores.armar_ranking(ranking)
+ranking.top_ranking(3)
+print()
+
+# e
+print('e) Criaturas derrotadas por Heracles:')
+arbol.inorden_derrotadas_por('Heracles')
+print()
+
+# g: el campo "capturada" ya esta en cada nodo
+
+# h
+print('capturas de Heracles:')
+for nombre in ['Cerbero', 'Toro de Creta', 'Cierva de Cerinea', 'Jabalí de Erimanto']:
+    nodo = arbol.search(nombre)
+    if nodo is not None:
+        nodo.other_values['capturada'] = 'Heracles'
+        print(nombre, '-> capturada por Heracles')
+print()
+
+# i
+print('bussqueda por coincidencia:')
+texto = input('Ingrese lo que quiere buscar (ej: jabal): ')
+encontrados = arbol.proxy_search(texto.lower())
+if encontrados:
+    for nodo in encontrados:
+        print(nodo.value)
+else:
+    print('Sin coincidencias')
+print()
+
+# j
+print('eliminar Basilisco y Sirenas:')
+valor, datos = arbol.delete_node('Basilisco')
+print('Eliminado:', valor)
+valor, datos = arbol.delete_node('Sirenas')
+print('Eliminado:', valor)
+print()
+
+# k
+print('modificar Aves del Estínfalo:')
+nodo = arbol.search('Aves del Estínfalo')
+if nodo is not None:
+    nodo.other_values['derrotado_por'] = 'Heracles'
+    nodo.other_values['descripcion'] = 'Heracles derrotó a varias.'
+    print(nodo.value, '->', nodo.other_values)
+print()
+
+# l
+print('l) Renombrar Ladón:')
+valor, datos = arbol.delete_node('Ladón')
+if valor is not None:
+    arbol.insert_node('Dragón Ladón', datos)
+    print('Ladón ahora es Dragón Ladón')
+print()
+
+# f (despues de k para que las Aves ya cuenten como derrotadas)
+print('f) Criaturas sin derrotar:')
+arbol.inorden_sin_derrotar()
+print()
+
+# m
+print('m) Listado por nivel:')
+arbol.by_level()
+print()
+
+# n
+print('n) Criaturas capturadas por Heracles:')
+arbol.inorden_capturadas_por('Heracles')
+print()

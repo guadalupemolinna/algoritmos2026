@@ -1,0 +1,82 @@
+from pokemon_data import pokemon_data
+from tree import BinaryTree
+ 
+arbol_nombre = BinaryTree()
+arbol_tipo = BinaryTree()
+arbol_numero = BinaryTree()
+
+for pokemon in pokemon_data:
+    arbol_numero.insert_node(pokemon['numero'],pokemon)
+    arbol_nombre.insert_node(pokemon['nombre'],pokemon)
+    
+    for tipo in pokemon['tipos']:
+        node= arbol_tipo.search(tipo)
+        if node is None:
+            arbol_tipo.insert_node(tipo, [pokemon['nombre']])
+        else:
+            node.other_values.append(pokemon['nombre'])
+
+print(f'pokemons cargados: {arbol_numero.count_nodes()}')
+
+print('\nBusqueda por numero:')
+nro = int(input('Ingrese un numero de pokemon:'))
+node = arbol_numero.search(nro)
+if node is None:
+    print('no existe ese numero')
+else:
+    print(node.other_values)
+
+
+print('\nbusqueda por nombre')
+texto = input('ingrese parte del nombre: ')
+encontrados = arbol_nombre.proxy_search(texto.lower())   # lower(): proxy_search compara en minúsculas
+if len(encontrados) == 0:
+    print('No hay Pokémons con ese texto')
+else:
+    for nodo in encontrados:
+        print(nodo.other_values)
+ 
+ 
+ 
+for tipo_buscado in ['fantasma', 'fuego', 'acero', 'eléctrico']:
+    node = arbol_tipo.search(tipo_buscado)
+    if node is None:
+        print(f'No hay pokemon de tipo {tipo_buscado}')
+    else:
+        print(f'\npokemons de tipo {tipo_buscado}:')
+        print(node.other_values)
+        
+if node is None:
+    print('No hay pokemon de ese tipo')
+else:
+    print(f'pokemons de tipo {tipo_buscado}:')
+    print(node.other_values)
+    
+
+print('\nlistado ascendente por numero')
+arbol_numero.inorden_pokemon_numero()
+
+print('\nlistado ascendente por nombre')
+arbol_nombre.inorden_pokemon_nombre()
+
+print('\nlistado por nivel por nombre')
+arbol_nombre.by_level()
+
+print('\ncantidad de Pokémon por tipo')
+arbol_tipo.inorden_cantidad_por_tipo()
+
+print('\ncon megaevoluciln:', arbol_numero.contar_con_mega())
+print('con forma Gigamax:', arbol_numero.contar_con_gigamax())
+
+for atacante in ['Jolteon', 'Lycanroc', 'Tyrantrum']:
+    nodo = arbol_nombre.search(atacante)
+
+    print(f'\npokeemon débiles frente a {atacante}')
+
+    if nodo is None:
+        print('no se encontró ese pokemon')
+    else:
+        tipos = nodo.other_values['tipos']
+        arbol_numero.inorden_debiles_frente_a(tipos)
+        
+        

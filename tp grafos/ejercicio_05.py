@@ -1,4 +1,3 @@
-"""Ejercicio 5 - Red de equipos (grafo no dirigido)."""
 from graph import Graph
 
 def cargar_red() -> Graph:
@@ -126,7 +125,7 @@ def punto_g(g: Graph):
 
 if __name__ == '__main__':
     red = cargar_red()
-    print('=== b. Barridos ==='); punto_b(red)
+    print(' b. Barridos ==='); punto_b(red)
     print('\n=== c. Camino más corto a la impresora ==='); punto_c(red)
     print('\n=== d. Árbol de expansión mínimo ==='); punto_d(red)
     print('\n=== e. PC (no notebook) más cercana a Guaraní ==='); punto_e(red)

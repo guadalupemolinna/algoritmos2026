@@ -1,4 +1,3 @@
-"ejercicio 14 - Ambientes de una casa (grafo no dirigido, pesos en metros)"
 from graph import Graph
 
 AMBIENTES = ['cocina', 'comedor', 'cochera', 'quincho', 'baño 1', 'baño 2',
